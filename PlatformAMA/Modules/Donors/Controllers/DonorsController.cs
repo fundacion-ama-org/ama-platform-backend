@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using PlatformAMA.Modules.Donors.Models;
 
 namespace PlatformAMA.Modules.Donors.Controllers
 {
@@ -6,10 +8,17 @@ namespace PlatformAMA.Modules.Donors.Controllers
   [ApiController]
   public class DonorsController : ControllerBase
   {
-    [HttpGet]
-    public ActionResult<IEnumerable<string>> Get()
+    private readonly ApplicationDbContext context;
+
+    public DonorsController(ApplicationDbContext context)
     {
-      return new string[] { "value1", "value2" };
+      this.context = context;
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<List<Donor>>> Get()
+    {
+      return await context.Donors.Include(d => d.Person).ToListAsync();
     }
 
     [HttpGet("{id}")]
@@ -19,8 +28,11 @@ namespace PlatformAMA.Modules.Donors.Controllers
     }
 
     [HttpPost]
-    public void Post([FromBody] string value)
+    public async Task<ActionResult> Post([FromBody] Donor donor)
     {
+      context.Add(donor);
+      await context.SaveChangesAsync();
+      return Ok();
     }
 
     [HttpPut("{id}")]
