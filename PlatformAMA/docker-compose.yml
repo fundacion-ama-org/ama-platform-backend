@@ -9,3 +9,5 @@ services:
       MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD}
     ports:
       - 1433:${DB_PORT}
+    volumes:
+      - ./db:/var/opt/mssql/data
