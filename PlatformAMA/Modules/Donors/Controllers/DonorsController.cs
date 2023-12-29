@@ -45,7 +45,6 @@ namespace PlatformAMA.Modules.Donors.Controllers
     [HttpPost]
     public async Task<ActionResult> Post([FromBody] DonorCreationDTO donorCreationDTO)
     {
-
       var person = mapper.Map<Person>(donorCreationDTO);
       context.Add(person);
       await context.SaveChangesAsync();
