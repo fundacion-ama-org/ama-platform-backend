@@ -25,8 +25,6 @@ namespace PlatformAMA.Modules.Volunteers.Models
     public DateTime EndDate { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
-    public DateTime CreatedBy { get; set; }
-    public DateTime UpdatedBy { get; set; }
   }
 }
 
