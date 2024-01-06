@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PlatformAMA.Modules.Common.Models;
 using PlatformAMA.Modules.Volunteers.DTOs;
 using PlatformAMA.Modules.Volunteers.Models;
@@ -21,17 +22,26 @@ namespace PlatformAMA.Modules.Volunteers.Controllers
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<string>> Get()
+    public async Task<ActionResult<List<VolunteerDTO>>> Get()
     {
-      // TODO: Implement logic to retrieve all volunteers
-      return new string[] { "Volunteer 1", "Volunteer 2" };
+      var volunteers = await context.Volunteers
+        .Include(v => v.Person)
+        .Include(v => v.ActivityType)
+        .ToListAsync();
+      var volunteersDTO = mapper.Map<List<VolunteerDTO>>(volunteers);
+      return volunteersDTO;
     }
 
     [HttpGet("{id}")]
-    public ActionResult<string> Get(int id)
+    public async Task<ActionResult<VolunteerDTO>> Get(int id)
     {
-      // TODO: Implement logic to retrieve a specific volunteer by ID
-      return "Volunteer " + id;
+      var volunteer = await context.Volunteers.FirstOrDefaultAsync(v => v.Id == id);
+      if (volunteer == null)
+      {
+        return NotFound();
+      }
+      var volunteerDTO = mapper.Map<VolunteerDTO>(volunteer);
+      return volunteerDTO;
     }
 
     [HttpPost]
@@ -41,7 +51,14 @@ namespace PlatformAMA.Modules.Volunteers.Controllers
       context.Add(person);
       await context.SaveChangesAsync();
 
-      var volunteer = new Volunteer { PersonId = person.Id };
+      var volunteer = mapper.Map<Volunteer>(volunteerCreationDTO);
+      volunteer.PersonId = person.Id;
+      volunteer.IsActive = true;
+      volunteer.Available = true;
+      volunteer.CreatedAt = DateTime.Now;
+      volunteer.UpdatedAt = DateTime.Now;
+
+      
       context.Add(volunteer);
       await context.SaveChangesAsync();
 
@@ -49,17 +66,42 @@ namespace PlatformAMA.Modules.Volunteers.Controllers
     }
 
     [HttpPut("{id}")]
-    public ActionResult<string> Put(int id, [FromBody] string value)
+    public async Task<ActionResult> Put(int id, [FromBody] VolunteerCreationDTO volunteerCreationDTO)
     {
-      // TODO: Implement logic to update a specific volunteer by ID
-      return "Volunteer updated";
+      var volunteer = await context.Volunteers.FirstOrDefaultAsync(v => v.Id == id);
+      if (volunteer == null)
+      {
+        return NotFound();
+      }
+
+      var person = await context.Persons.FirstOrDefaultAsync(p => p.Id == volunteer.PersonId);
+      if (person == null)
+      {
+        return NotFound();
+      }
+
+      mapper.Map(volunteerCreationDTO, person);
+      await context.SaveChangesAsync();
+
+      mapper.Map(volunteerCreationDTO, volunteer);
+      await context.SaveChangesAsync();
+
+      return NoContent();
     }
 
     [HttpDelete("{id}")]
-    public ActionResult<string> Delete(int id)
+    public async Task<ActionResult> Delete(int id)
     {
-      // TODO: Implement logic to delete a specific volunteer by ID
-      return "Volunteer deleted";
+      var volunteer = await context.Volunteers.FirstOrDefaultAsync(v => v.Id == id);
+      if (volunteer == null)
+      {
+        return NotFound();
+      }
+
+      volunteer.IsActive = false;
+      await context.SaveChangesAsync();
+
+      return NoContent();
     }
   }
 }

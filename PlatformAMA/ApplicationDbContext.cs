@@ -13,6 +13,7 @@ namespace PlatformAMA
     }
 
     public DbSet<Person> Persons { get; set; }
+    public DbSet<IdentificationType> IdentificationTypes { get; set; }
     public DbSet<Donor> Donors { get; set; }
     public DbSet<ActivityType> ActivityTypes { get; set; }
     public DbSet<Volunteer> Volunteers { get; set; }

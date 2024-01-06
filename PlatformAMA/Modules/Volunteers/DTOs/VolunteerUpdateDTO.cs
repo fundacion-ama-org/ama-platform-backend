@@ -4,7 +4,7 @@ using PlatformAMA.Modules.Common.DTOs;
 
 namespace PlatformAMA.Modules.Volunteers.DTOs
 {
-  public class VolunteerCreationDTO : PersonCreationDTO
+  public class VolunteerUpdateDTO : PersonCreationDTO
   {
     public string Gender { get; set; }
     [Required]
