@@ -38,11 +38,26 @@ namespace PlatformAMA
                  Name = "Fundación AMA",
                }
              });
+
+             var XMLFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+             var XMLPath = Path.Combine(AppContext.BaseDirectory, XMLFile);
+
+             config.IncludeXmlComments(XMLPath);
            });
 
       services.AddAutoMapper(typeof(Startup));
 
       services.AddApplicationInsightsTelemetry();
+
+      services.AddCors(options =>
+      {
+        options.AddDefaultPolicy(builder =>
+        {
+          builder.AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+      });
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
