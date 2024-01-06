@@ -7,6 +7,7 @@ namespace PlatformAMA.Modules.Common.Models
   public class Person
   {
     public int Id { get; set; }
+    [Required]
     public int IdentificationTypeId { get; set; }
     public IdentificationType IdentificationType { get; set; }
     [Required]
@@ -29,7 +30,5 @@ namespace PlatformAMA.Modules.Common.Models
     public bool IsActive { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
-    public DateTime CreatedBy { get; set; }
-    public DateTime UpdatedBy { get; set; }
   }
 }

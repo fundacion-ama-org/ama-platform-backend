@@ -1,6 +1,8 @@
 
 
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 namespace PlatformAMA
 {
@@ -23,9 +25,24 @@ namespace PlatformAMA
 
       // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
       services.AddEndpointsApiExplorer();
-      services.AddSwaggerGen();
+      services.AddSwaggerGen(config =>
+           {
+             config.SwaggerDoc("v1", new OpenApiInfo
+             {
+               Title = "Plataforma Fundación AMA",
+               Version = "v1",
+               Description = "REST API para la Plataforma Fundación AMA",
+               Contact = new OpenApiContact
+               {
+                 Email = "fundacionamasoftware@gmail.com",
+                 Name = "Fundación AMA",
+               }
+             });
+           });
 
       services.AddAutoMapper(typeof(Startup));
+
+      services.AddApplicationInsightsTelemetry();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -37,7 +54,8 @@ namespace PlatformAMA
 
       app.UseSwagger();
       app.UseSwaggerUI();
-      
+
+
       app.UseHttpsRedirection();
       app.UseRouting();
       app.UseAuthorization();
