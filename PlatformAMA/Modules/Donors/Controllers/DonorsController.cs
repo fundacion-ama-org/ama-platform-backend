@@ -20,6 +20,10 @@ namespace PlatformAMA.Modules.Donors.Controllers
       this.mapper = mapper;
     }
 
+    /// <summary>
+    /// Obtener el listado de donantes
+    /// </summary>
+    /// <returns></returns>
     [HttpGet]
     public async Task<ActionResult<List<DonorDTO>>> Get()
     {
@@ -30,6 +34,11 @@ namespace PlatformAMA.Modules.Donors.Controllers
       return mapper.Map<List<DonorDTO>>(donors);
     }
 
+    /// <summary>
+    /// Obtener un donante por su Id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -45,6 +54,11 @@ namespace PlatformAMA.Modules.Donors.Controllers
       return mapper.Map<DonorDTO>(donor);
     }
 
+    /// <summary>
+    /// Crear un donante
+    /// </summary>
+    /// <param name="donorCreationDTO">Datos del donante a crear</param>
+    /// <returns></returns>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -75,6 +89,12 @@ namespace PlatformAMA.Modules.Donors.Controllers
       }
     }
 
+    /// <summary>
+    /// Actualizar un donante
+    /// </summary>
+    /// <param name="id">Id del donante a actualizar</param>
+    /// <param name="donorUpdateDTO">Datos del donante a actualizar</param>
+    /// <returns></returns>
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -94,6 +114,11 @@ namespace PlatformAMA.Modules.Donors.Controllers
       return NoContent();
     }
 
+    /// <summary>
+    /// Eliminar un donante
+    /// </summary>
+    /// <param name="id">Id del donante a eliminar</param>
+    /// <returns></returns>
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
