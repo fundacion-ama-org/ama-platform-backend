@@ -25,7 +25,7 @@ namespace PlatformAMA.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "IdentificationType",
+                name: "IdentificationTypes",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -40,7 +40,7 @@ namespace PlatformAMA.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_IdentificationType", x => x.Id);
+                    table.PrimaryKey("PK_IdentificationTypes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -67,9 +67,9 @@ namespace PlatformAMA.Migrations
                 {
                     table.PrimaryKey("PK_Persons", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Persons_IdentificationType_IdentificationTypeId",
+                        name: "FK_Persons_IdentificationTypes_IdentificationTypeId",
                         column: x => x.IdentificationTypeId,
-                        principalTable: "IdentificationType",
+                        principalTable: "IdentificationTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -165,7 +165,7 @@ namespace PlatformAMA.Migrations
                 name: "Persons");
 
             migrationBuilder.DropTable(
-                name: "IdentificationType");
+                name: "IdentificationTypes");
         }
     }
 }

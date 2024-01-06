@@ -23,7 +23,9 @@ namespace PlatformAMA.Modules.Donors.Controllers
     [HttpGet]
     public async Task<ActionResult<List<DonorDTO>>> Get()
     {
-      var donors = await context.Donors.Include(d => d.Person).ToListAsync();
+      var donors = await context.Donors
+        .Include(d => d.Person)
+        .ToListAsync();
 
       return mapper.Map<List<DonorDTO>>(donors);
     }

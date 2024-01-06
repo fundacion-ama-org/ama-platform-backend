@@ -51,7 +51,7 @@ namespace PlatformAMA.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("IdentificationType");
+                    b.ToTable("IdentificationTypes");
                 });
 
             modelBuilder.Entity("PlatformAMA.Modules.Common.Models.Person", b =>
@@ -235,7 +235,7 @@ namespace PlatformAMA.Migrations
             modelBuilder.Entity("PlatformAMA.Modules.Volunteers.Models.Volunteer", b =>
                 {
                     b.HasOne("PlatformAMA.Modules.Volunteers.Models.ActivityType", "ActivityType")
-                        .WithMany()
+                        .WithMany("Volunteers")
                         .HasForeignKey("ActivityTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

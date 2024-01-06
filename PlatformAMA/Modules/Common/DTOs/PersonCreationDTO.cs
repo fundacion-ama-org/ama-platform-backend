@@ -21,7 +21,5 @@ namespace PlatformAMA.Modules.Common.DTOs
     [Required]
     [Phone]
     public string PhoneNumber { get; set; }
-    [Required]
-    public int ActivityId { get; set; }
   }
 }
