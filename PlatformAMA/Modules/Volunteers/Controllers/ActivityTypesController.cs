@@ -1,4 +1,6 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlatformAMA.Modules.Volunteers.DTOs;
@@ -20,6 +22,7 @@ namespace PlatformAMA.Modules.Volunteers.Controllers
     }
 
     [HttpGet]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<ActionResult<List<ActivityTypeDTO>>> Get()
     {
       var activityTypes = await context.ActivityTypes.ToListAsync();

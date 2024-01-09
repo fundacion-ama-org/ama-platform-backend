@@ -1,4 +1,5 @@
 
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using PlatformAMA.Modules.Common.Models;
 using PlatformAMA.Modules.Donors.Models;
@@ -6,7 +7,7 @@ using PlatformAMA.Modules.Volunteers.Models;
 
 namespace PlatformAMA
 {
-  public class ApplicationDbContext : DbContext
+  public class ApplicationDbContext : IdentityDbContext
   {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
