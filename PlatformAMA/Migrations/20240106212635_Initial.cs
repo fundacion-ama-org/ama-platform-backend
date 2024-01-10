@@ -15,9 +15,7 @@ namespace PlatformAMA.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(maxLength: 100, nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
-                    UpdatedAt = table.Column<DateTime>(nullable: false),
-                    CreatedBy = table.Column<DateTime>(nullable: false),
-                    UpdatedBy = table.Column<DateTime>(nullable: false)
+                    UpdatedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -51,9 +49,7 @@ namespace PlatformAMA.Migrations
                     Description = table.Column<string>(nullable: true),
                     IsActive = table.Column<bool>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
-                    UpdatedAt = table.Column<DateTime>(nullable: false),
-                    CreatedBy = table.Column<DateTime>(nullable: false),
-                    UpdatedBy = table.Column<DateTime>(nullable: false)
+                    UpdatedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -76,9 +72,7 @@ namespace PlatformAMA.Migrations
                     PhoneNumber = table.Column<string>(nullable: false),
                     IsActive = table.Column<bool>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
-                    UpdatedAt = table.Column<DateTime>(nullable: false),
-                    CreatedBy = table.Column<DateTime>(nullable: false),
-                    UpdatedBy = table.Column<DateTime>(nullable: false)
+                    UpdatedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -97,7 +91,9 @@ namespace PlatformAMA.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    PersonId = table.Column<int>(nullable: false)
+                    PersonId = table.Column<int>(nullable: false),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    UpdatedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -125,9 +121,7 @@ namespace PlatformAMA.Migrations
                     StartDate = table.Column<DateTime>(nullable: false),
                     EndDate = table.Column<DateTime>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
-                    UpdatedAt = table.Column<DateTime>(nullable: false),
-                    CreatedBy = table.Column<DateTime>(nullable: false),
-                    UpdatedBy = table.Column<DateTime>(nullable: false)
+                    UpdatedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {

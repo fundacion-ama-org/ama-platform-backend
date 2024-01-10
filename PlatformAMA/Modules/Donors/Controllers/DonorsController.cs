@@ -20,6 +20,10 @@ namespace PlatformAMA.Modules.Donors.Controllers
       this.mapper = mapper;
     }
 
+    /// <summary>
+    /// Obtener el listado de donantes
+    /// </summary>
+    /// <returns></returns>
     [HttpGet]
     public async Task<ActionResult<List<DonorDTO>>> Get()
     {
@@ -30,11 +34,17 @@ namespace PlatformAMA.Modules.Donors.Controllers
       return mapper.Map<List<DonorDTO>>(donors);
     }
 
+    /// <summary>
+    /// Obtener un donante por su Id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpGet("{id}")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult<DonorDTO> Get(int id)
     {
       var donor = context.Donors.Include(d => d.Person).FirstOrDefault(d => d.Id == id);
-
 
       if (donor == null)
       {
@@ -44,21 +54,50 @@ namespace PlatformAMA.Modules.Donors.Controllers
       return mapper.Map<DonorDTO>(donor);
     }
 
+    /// <summary>
+    /// Crear un donante
+    /// </summary>
+    /// <param name="donorCreationDTO">Datos del donante a crear</param>
+    /// <returns></returns>
     [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> Post([FromBody] DonorCreationDTO donorCreationDTO)
     {
-      var person = mapper.Map<Person>(donorCreationDTO);
-      context.Add(person);
-      await context.SaveChangesAsync();
+      try
+      {
+        var identificationType = await context.IdentificationTypes.AnyAsync(it => it.Id == donorCreationDTO.IdentificationTypeId);
 
-      var donor = new Donor { PersonId = person.Id };
-      context.Add(donor);
-      await context.SaveChangesAsync();
+        if (!identificationType)
+        {
+          return BadRequest($"Identification Type with Id {donorCreationDTO.IdentificationTypeId} does not exist");
+        }
 
-      return Ok();
+        var person = mapper.Map<Person>(donorCreationDTO);
+        context.Add(person);
+        await context.SaveChangesAsync();
+
+        var donor = new Donor { PersonId = person.Id };
+        context.Add(donor);
+        await context.SaveChangesAsync();
+
+        return CreatedAtAction(nameof(Get), new { id = donor.Id }, mapper.Map<DonorDTO>(donor));
+      }
+      catch (Exception ex)
+      {
+        return BadRequest(ex.Message);
+      }
     }
 
+    /// <summary>
+    /// Actualizar un donante
+    /// </summary>
+    /// <param name="id">Id del donante a actualizar</param>
+    /// <param name="donorUpdateDTO">Datos del donante a actualizar</param>
+    /// <returns></returns>
     [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Put(int id, [FromBody] DonorUpdateDTO donorUpdateDTO)
     {
 
@@ -75,7 +114,14 @@ namespace PlatformAMA.Modules.Donors.Controllers
       return NoContent();
     }
 
+    /// <summary>
+    /// Eliminar un donante
+    /// </summary>
+    /// <param name="id">Id del donante a eliminar</param>
+    /// <returns></returns>
     [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(int id)
     {
       var donor = await context.Donors.FindAsync(id);
