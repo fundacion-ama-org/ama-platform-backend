@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -31,7 +33,7 @@ namespace PlatformAMA.Modules.Auth.Controllers
     /// <param name="signUpDTO">Datos del usuario a registrar</param>
     /// <returns></returns>
     [HttpPost("signup")]
-    public async Task<ActionResult> SignUp([FromBody] SingUpDTO signUpDTO)
+    public async Task<ActionResult<AuthResponseDTO>> SignUp([FromBody] SingUpDTO signUpDTO)
     {
       var user = new IdentityUser { UserName = signUpDTO.Identification, Email = signUpDTO.Email };
       var result = await _userManager.CreateAsync(user, signUpDTO.Password);
@@ -50,7 +52,7 @@ namespace PlatformAMA.Modules.Auth.Controllers
     /// <param name="signInDTO">Credenciales de inicio de sesión</param>
     /// <returns></returns>
     [HttpPost("signin")]
-    public async Task<IActionResult> SignIn([FromBody] SingInDTO signInDTO)
+    public async Task<ActionResult<AuthResponseDTO>> SignIn([FromBody] SingInDTO signInDTO)
     {
       var result = await _signInManager.PasswordSignInAsync(signInDTO.Identification, signInDTO.Password, isPersistent: false, lockoutOnFailure: false);
 
@@ -60,6 +62,22 @@ namespace PlatformAMA.Modules.Auth.Controllers
       }
 
       return Unauthorized();
+    }
+
+    /// <summary>
+    /// Renovar el token de autenticación
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("renew")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public ActionResult<AuthResponseDTO> Renew()
+    {
+      var identification = HttpContext.User.Claims
+        .Where(x => x.Type == ClaimTypes.NameIdentifier)
+        .FirstOrDefault()
+        .Value;
+        
+      return Ok(CreateToken(identification));
     }
 
     private AuthResponseDTO CreateToken(string identification)
