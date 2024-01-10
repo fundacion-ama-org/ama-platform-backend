@@ -20,7 +20,6 @@
     <Folder Include="Modules/Donors/" />
     <Folder Include="Modules/Donors/Models/" />
     <Folder Include="Modules/Donors/Controllers/" />
-    <Folder Include="Modules\Beneficiaries\" />
   </ItemGroup>
 
 </Project>

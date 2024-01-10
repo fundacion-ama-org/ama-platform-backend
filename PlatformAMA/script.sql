@@ -137,3 +137,95 @@ END;
 
 GO
 
+-- ----------
+IF NOT EXISTS(SELECT * FROM [__EFMigrationsHistory] WHERE [MigrationId] = N'20240105221726_Initial')
+BEGIN
+    CREATE TABLE [Brigades] (
+        [Id] int NOT NULL IDENTITY,
+        [PersonId] int NOT NULL,
+        [Name] nvarchar(50) NOT NULL,
+        [Description] nvarchar(max) NULL,
+        [StartDate] datetime2 NOT NULL,
+        [EndDate] datetime2 NOT NULL,
+        [IsActive] bit NOT NULL,
+        [CreatedAt] datetime2 NOT NULL,
+[UpdatedAt] datetime2 NOT NULL,
+[CreatedBy] datetime2 NOT NULL,
+[UpdatedBy] datetime2 NOT NULL,        
+CONSTRAINT [PK_ Brigades] PRIMARY KEY ([Id]),
+CONSTRAINT [FK_ Brigades_Persons_PersonId] FOREIGN KEY ([PersonId]) REFERENCES [Persons] ([Id]) ON DELETE CASCADE
+    );
+END;
+
+GO
+
+
+IF NOT EXISTS(SELECT * FROM [__EFMigrationsHistory] WHERE [MigrationId] = N'20240105221726_Initial')
+BEGIN
+    CREATE TABLE [BeneficiaryTypes] (
+        [Id] int NOT NULL IDENTITY,
+        [Name] nvarchar(100) NOT NULL,
+        [IsActive] bit NOT NULL,
+        [CreatedAt] datetime2 NOT NULL,
+        [UpdatedAt] datetime2 NOT NULL,
+        [CreatedBy] datetime2 NOT NULL,
+        [UpdatedBy] datetime2 NOT NULL,
+        CONSTRAINT [PK_BeneficiaryTypes] PRIMARY KEY ([Id])
+    );
+END;
+
+GO
+
+BEGIN
+    CREATE TABLE [Beneficiaries] (
+        [Id] int NOT NULL IDENTITY,
+        [PersonId] int NOT NULL,
+        [IsActive] bit NOT NULL,
+        [CreatedAt] datetime2 NOT NULL,
+        [UpdatedAt] datetime2 NOT NULL,
+        [CreatedBy] datetime2 NOT NULL,
+        [UpdatedBy] datetime2 NOT NULL,
+        CONSTRAINT [PK_ Beneficiaries] PRIMARY KEY ([Id]),
+        CONSTRAINT [FK_ Beneficiaries _BeneficiaryTypes_ BeneficiaryTypesId] FOREIGN KEY ([BeneficiaryTypes]) REFERENCES [BeneficiaryTypes] ([Id]) ON DELETE CASCADE,
+        CONSTRAINT [FK_ Beneficiaries _Persons_PersonId] FOREIGN KEY ([PersonId]) REFERENCES [Persons] ([Id]) ON DELETE CASCADE
+    );
+END;
+
+GO
+
+-- IF NOT EXISTS(SELECT * FROM [__EFMigrationsHistory] WHERE [MigrationId] = N'20240105221726_Initial')
+--BEGIN
+--    CREATE TABLE [BrigadeBeneficiaries] (
+--        [Id] int NOT NULL IDENTITY,
+--        [BrigadeId] int NOT NULL,
+--        [BeneficiaryId] int NOT NULL,
+--        [BeneficiaryTypeId] int NOT NULL,
+--        [Description] int NOT NULL,
+--        [IsActive] bit NOT NULL,
+--        [CreatedAt] datetime2 NOT NULL,
+--        [UpdatedAt] datetime2 NOT NULL,
+--        [CreatedBy] datetime2 NOT NULL,
+--        [UpdatedBy] datetime2 NOT NULL,
+--        CONSTRAINT [PK_ BrigadeBeneficiaries] PRIMARY KEY ([Id]),
+--        CONSTRAINT [FK_ BrigadeBeneficiaries _BeneficiaryTypes_ BeneficiaryTypesId] FOREIGN KEY ([BeneficiaryTypes]) REFERENCES [BeneficiaryTypes] ([Id]) ON DELETE CASCADE, 
+--        CONSTRAINT [FK_ BrigadeBeneficiaries _Beneficiaries_ BeneficiaryId] FOREIGN KEY ([BeneficiaryId]) REFERENCES [Beneficiaries] ([Id]) ON DELETE CASCADE
+-- );
+--END;
+
+--GO
+----------
+
+IF NOT EXISTS(SELECT * FROM [__EFMigrationsHistory] WHERE [MigrationId] = N'20240105221726_Initial')
+BEGIN
+    CREATE INDEX [IX_Beneficiaries_BeneficiaryTypeId] ON [Beneficiaries] ([BeneficiaryTypeId]);
+END;
+
+GO
+
+IF NOT EXISTS(SELECT * FROM [__EFMigrationsHistory] WHERE [MigrationId] = N'20240105221726_Initial')
+BEGIN
+    CREATE INDEX [IX_Beneficiaries_PersonId] ON [Beneficiaries] ([PersonId]);
+END;
+
+GO
+
