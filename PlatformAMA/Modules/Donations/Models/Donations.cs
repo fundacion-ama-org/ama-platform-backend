@@ -1,16 +1,28 @@
 using PlatformAMA.Modules.Common.Models;
-using PlatformAMA.Modules.Volunteers.Models;
+using PlatformAMA.Modules.Donations.Models;
+using PlatformAMA.Modules.Brigade.Models;
 
-namespace PlatformAMA.Modules.Donors.Models
+
+namespace PlatformAMA.Modules.Donations.Models
 {
     public class Donations
     {
-        public int DonationId { get; set; }
-        public string DonationName { get; set; }
-        public string DonationType { get; set; }
-        public decimal Value { get; set; }
+        public int Id { get; set; }
+        public int PersonId { get; set; }
+        public Person Person { get; set; }
+        public string Name { get; set; }
+        public decimal Price { get; set; }
         public decimal Total { get; set; }
-        public string Donor { get; set; }
-        public DateTime DonationDate { get; set; }
+        public bool IsActive { get; set; }
+        [Required]
+        public int BrigadeId { get; set; }
+        public Brigade Brigade { get; set; }
+        public string DonationName { get; set; }
+        public int DonationTypeId { get; set; }
+        public DonationType DonationType { get; set; }
+        public decimal Total { get; set; }
+        public DateTime AsignedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 }
