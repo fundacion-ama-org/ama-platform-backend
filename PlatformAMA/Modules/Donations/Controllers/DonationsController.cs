@@ -20,74 +20,110 @@ namespace PlatformAMA.Modules.Donations.Controllers
             this.mapper = mapper;
         }
 
+        [HttpPost]
+        public async Task<ActionResult> Post([FromBody] DonationCreationDTO donationCreationDTO)
+        {
+            
+            var donation = mapper.Map<Donation>(donationCreationDTO);
+
+           
+            donation.CreatedAt = DateTime.Now; 
+            donation.UpdatedAt = DateTime.Now; 
+
+           
+            context.Donations.Add(donation);
+            await context.SaveChangesAsync();
+
+           
+            return Ok("Donación creada exitosamente");
+        }
+
+
+
+
         [HttpGet]
         public async Task<ActionResult<List<DonationDTO>>> Get()
         {
             var donations = await context.Donations
               .Include(v => v.Person)
-              .Include(v => v.ActivityType)
+              .Include(v => v.DonationType)
               .ToListAsync();
-            var donationDTO = mapper.Map<List<DonationDTO>>(dionations);
+            var donationDTO = mapper.Map<List<DonationDTO>>(donations);
             return donationDTO;
         }
+
+        /// <summary>
+        /// Consultar 
+        /// </summary>
+        /// <param name="nombre_donacion"></param>
+        /// <returns></returns>
+        [HttpGet("{nombre_donacion}")]
+        public async Task<ActionResult<DonationDTO>> Get(string nombre_donacion)
+        {
+            var donation = await context.Donations
+                .FirstOrDefaultAsync(d => d.Nombre_donacion == nombre_donacion);
+
+            if (donation == null)
+            {
+                return NotFound();
+            }
+
+            var donationDTO = mapper.Map<DonationDTO>(donation);
+            return donationDTO;
+        }
+
 
         [HttpGet("{id}")]
         public async Task<ActionResult<DonationDTO>> Get(int id)
         {
             var donation = await context.Donations.FirstOrDefaultAsync(v => v.Id == id);
+            
             if (donation == null)
             {
                 return NotFound();
             }
-            var donationDTO = mapper.Map<DonationsDTO>(donation);
-            return donationDTO;
-        }
+            mapper.Map(DonationCreationDTO, donation);
 
-        [HttpPost]
-        public async Task<ActionResult> Post([FromBody] DonationCreationDTO donationCreationDTO)
-        {
-            var person = mapper.Map<Person>(donationCreationDTO);
-            context.Add(person);
-            await context.SaveChangesAsync();
-
-            var donation = mapper.Map<Volunteer>(donationCreationDTO);
-            
-            donation.PersonId = person.Id;
-            donation.IsActive = true;
-            donation.Available = true;
-            donation.CreatedAt = DateTime.Now;
-            donation.UpdatedAt = DateTime.Now;
-
-
-            context.Add(volunteer);
-            await context.SaveChangesAsync();
-
-            return Ok();
-        }
-
-        [HttpPut("{id}")]
-        public async Task<ActionResult> Put(int id, [FromBody] DonationCreationDTO donationCreationDTO)
-        {
-            var volunteer = await context.Donations.FirstOrDefaultAsync(v => v.Id == id);
-            if (volunteer == null)
-            {
-                return NotFound();
-            }
-
-            var person = await context.Persons.FirstOrDefaultAsync(p => p.Id == volunteer.PersonId);
-            if (person == null)
-            {
-                return NotFound();
-            }
-
-            mapper.Map(donationCreationDTO, person);
-            await context.SaveChangesAsync();
-
-            mapper.Map(donationCreationDTO, donation);
             await context.SaveChangesAsync();
 
             return NoContent();
         }
+
+       
+
+        /// Crear un donante     
+        name="donorCreationDTO"
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> Post([FromBody] DonorCreationDTO donorCreationDTO)
+        {
+            try
+            {
+                var identificationType = await context.IdentificationTypes.AnyAsync(it => it.Id == donorCreationDTO.IdentificationTypeId);
+
+                if (!identificationType)
+                {
+                    return BadRequest($"Identification Type with Id {donorCreationDTO.IdentificationTypeId} does not exist");
+                }
+
+                var person = mapper.Map<Person>(donorCreationDTO);
+                context.Add(person);
+                await context.SaveChangesAsync();
+
+                var donor = new Donor { PersonId = person.Id };
+                context.Add(donor);
+                await context.SaveChangesAsync();
+
+                return CreatedAtAction(nameof(Get), new { id = donor.Id }, mapper.Map<DonorDTO>(donor));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
