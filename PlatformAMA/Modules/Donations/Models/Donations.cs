@@ -1,6 +1,6 @@
 using PlatformAMA.Modules.Common.Models;
 using PlatformAMA.Modules.Donations.Models;
-using PlatformAMA.Modules.Brigade.Models;
+using System.ComponentModel.DataAnnotations;
 
 
 namespace PlatformAMA.Modules.Donations.Models
@@ -16,7 +16,7 @@ namespace PlatformAMA.Modules.Donations.Models
         public bool IsActive { get; set; }
         [Required]
         public int BrigadeId { get; set; }
-        public Brigade Brigade { get; set; }
+      
         public string DonationName { get; set; }
         public int DonationTypeId { get; set; }
         public DonationType DonationType { get; set; }

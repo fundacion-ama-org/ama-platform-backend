@@ -1,9 +1,16 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlatformAMA.Modules.Common.Models;
+using PlatformAMA.Modules.Donation.DTOs;
 using PlatformAMA.Modules.Donations.DTOs;
 using PlatformAMA.Modules.Donations.Models;
+using PlatformAMA.Modules.Donors.DTOs;
+using PlatformAMA.Modules.Donors.Models;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace PlatformAMA.Modules.Donations.Controllers
 {
@@ -23,40 +30,27 @@ namespace PlatformAMA.Modules.Donations.Controllers
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] DonationCreationDTO donationCreationDTO)
         {
-            
             var donation = mapper.Map<Donation>(donationCreationDTO);
 
-           
-            donation.CreatedAt = DateTime.Now; 
-            donation.UpdatedAt = DateTime.Now; 
+            donation.CreatedAt = DateTime.Now;
+            donation.UpdatedAt = DateTime.Now;
 
-           
             context.Donations.Add(donation);
             await context.SaveChangesAsync();
-
-           
             return Ok("Donación creada exitosamente");
         }
-
-
-
 
         [HttpGet]
         public async Task<ActionResult<List<DonationDTO>>> Get()
         {
             var donations = await context.Donations
-              .Include(v => v.Person)
-              .Include(v => v.DonationType)
-              .ToListAsync();
+                .Include(v => v.Person)
+            .Include(v => v.DonationType)
+                .ToListAsync();
             var donationDTO = mapper.Map<List<DonationDTO>>(donations);
             return donationDTO;
         }
 
-        /// <summary>
-        /// Consultar 
-        /// </summary>
-        /// <param name="nombre_donacion"></param>
-        /// <returns></returns>
         [HttpGet("{nombre_donacion}")]
         public async Task<ActionResult<DonationDTO>> Get(string nombre_donacion)
         {
@@ -72,31 +66,26 @@ namespace PlatformAMA.Modules.Donations.Controllers
             return donationDTO;
         }
 
-
         [HttpGet("{id}")]
         public async Task<ActionResult<DonationDTO>> Get(int id)
         {
             var donation = await context.Donations.FirstOrDefaultAsync(v => v.Id == id);
-            
+
             if (donation == null)
             {
                 return NotFound();
             }
-            mapper.Map(DonationCreationDTO, donation);
+            object value = mapper.Map(DonationCreationDTO, donation);
 
             await context.SaveChangesAsync();
 
             return NoContent();
         }
 
-       
-
-        /// Crear un donante     
-        name="donorCreationDTO"
-        [HttpPost]
+        [HttpPost("donor")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> Post([FromBody] DonorCreationDTO donorCreationDTO)
+        public async Task<ActionResult> PostDonor([FromBody] DonorCreationDTO donorCreationDTO)
         {
             try
             {
@@ -122,8 +111,6 @@ namespace PlatformAMA.Modules.Donations.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
-
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
