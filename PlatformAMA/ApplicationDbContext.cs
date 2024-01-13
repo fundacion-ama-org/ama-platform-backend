@@ -21,5 +21,6 @@ namespace PlatformAMA
     public DbSet<Volunteer> Volunteers { get; set; }
     public DbSet<BeneficiaryType> BeneficiaryType { get; set; }
     public DbSet<Beneficiarie> Beneficiaries { get; set; }
+    public object DonationType { get; internal set; }
     }
 }

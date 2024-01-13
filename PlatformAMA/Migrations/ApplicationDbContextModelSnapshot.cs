@@ -538,11 +538,11 @@ namespace PlatformAMA.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("PlatformAMA.Modules.Volunteers.Models.Volunteer", b =>
+            modelBuilder.Entity("PlatformAMA.Modules.Donations.Models.Donations", b =>
                 {
-                    b.HasOne("PlatformAMA.Modules.Volunteers.Models.ActivityType", "ActivityType")
-                        .WithMany("Volunteers")
-                        .HasForeignKey("ActivityTypeId")
+                    b.HasOne("PlatformAMA.Modules.Donations.Models.DonationType", "DonationType")
+                        .WithMany("Donations")
+                        .HasForeignKey("DonationTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -566,6 +566,60 @@ namespace PlatformAMA.Migrations
                     .HasForeignKey("PersonId")
                     .OnDelete(DeleteBehavior.Cascade)
                     .IsRequired();
+            });
+            modelBuilder.Entity("PlatformAMA.Modules.Donations.Models.DonationType", b =>
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int")
+                    .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                b.Property<DateTime>("CreatedAt")
+                    .HasColumnType("datetime2");
+
+                b.Property<string>("Name")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(100)")
+                    .HasMaxLength(100);
+
+                b.Property<DateTime>("UpdatedAt")
+                    .HasColumnType("datetime2");
+
+                b.HasKey("Id");
+
+                b.ToTable("DonationType");
+            });
+            modelBuilder.Entity("PlatformAMA.Modules.Donations.Models.Donations", b =>
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int")
+                    .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                b.Property<int>("DonationTypeId")
+                    .HasColumnType("int");
+
+                b.Property<DateTime>("CreatedAt")
+                    .HasColumnType("datetime2");
+
+
+                b.Property<bool>("IsActive")
+                    .HasColumnType("bit");
+
+                b.Property<int>("PersonId")
+                    .HasColumnType("int");
+
+
+                b.Property<DateTime>("UpdatedAt")
+                    .HasColumnType("datetime2");
+
+                b.HasKey("Id");
+
+                b.HasIndex("DonationTypeId");
+
+                b.HasIndex("PersonId");
+
+                b.ToTable("Donations");
             });
 #pragma warning restore 612, 618
         }

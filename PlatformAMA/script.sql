@@ -183,6 +183,23 @@ BEGIN
         CONSTRAINT [FK_ Beneficiaries _BeneficiaryTypes_ BeneficiaryTypesId] FOREIGN KEY ([BeneficiaryTypes]) REFERENCES [BeneficiaryTypes] ([Id]) ON DELETE CASCADE,
         CONSTRAINT [FK_ Beneficiaries _Persons_PersonId] FOREIGN KEY ([PersonId]) REFERENCES [Persons] ([Id]) ON DELETE CASCADE
     );
+-- Migración para la entidad ModificarDonaciones
+IF NOT EXISTS(SELECT * FROM [__EFMigrationsHistory] WHERE [MigrationId] = N'20240105221726_ModificarDonaciones')
+BEGIN
+    -- Create ModificarDonaciones table
+    CREATE TABLE [ModificarDonaciones] (
+        -- Define attributes that can be modified
+        [Id_donation] int NOT NULL,
+        [Price] decimal(18, 2) NOT NULL,
+        [Description] nvarchar(max) NOT NULL,
+        [Donor] nvarchar(100) NOT NULL,
+        [Donation_type] nvarchar(50) NOT NULL,
+        CONSTRAINT [PK_ModificarDonaciones] PRIMARY KEY ([Id_donation])
+    );
+
+    -- Insert migration data
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20240105221726_ModificarDonaciones', N'3.1.32');
 END;
 
 GO
@@ -223,3 +240,23 @@ END;
 
 GO
 
+-- Migración para la entidad CrearDonante
+IF NOT EXISTS(SELECT * FROM [__EFMigrationsHistory] WHERE [MigrationId] = N'20240105221726_CrearDonante')
+BEGIN
+    -- Create CrearDonante table
+    CREATE TABLE [CrearDonante] (
+        [Id_donor] int NOT NULL IDENTITY,
+        [Donor_name] nvarchar(100) NOT NULL,
+        [Donation_type] nvarchar(50) NOT NULL,
+        [Donation_value] decimal(18, 2) NOT NULL,
+        [Donor_cellphone] nvarchar(20) NOT NULL,
+        [Volunteer] bit NOT NULL,
+        CONSTRAINT [PK_CrearDonante] PRIMARY KEY ([Id_donor])
+    );
+
+    -- Insert migration data
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20240105221726_CrearDonante', N'3.1.32');
+END;
+
+GO
