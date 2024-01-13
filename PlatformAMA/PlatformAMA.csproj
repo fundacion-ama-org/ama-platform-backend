@@ -22,7 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Modules/" />
     <Folder Include="Modules/Donors/" />
     <Folder Include="Modules/Donors/Models/" />
     <Folder Include="Modules/Donors/Controllers/" />
