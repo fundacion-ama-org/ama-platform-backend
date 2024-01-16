@@ -8,6 +8,9 @@ namespace PlatformAMA.Modules.Common.Models
   {
     public int Id { get; set; }
     [Required]
+    [CedulaEcuatoriana(ErrorMessage = "La cédula no es válida.")]
+    public string Identification { get; set; }
+    [Required]
     public int IdentificationTypeId { get; set; }
     public IdentificationType IdentificationType { get; set; }
     [Required]
