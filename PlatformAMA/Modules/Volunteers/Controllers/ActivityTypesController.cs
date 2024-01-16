@@ -21,8 +21,12 @@ namespace PlatformAMA.Modules.Volunteers.Controllers
       this.mapper = mapper;
     }
 
+    /// <summary>
+    /// Obtener todos los tipos de actividades
+    /// </summary>
+    /// <returns></returns>
     [HttpGet]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<List<ActivityTypeDTO>>> Get()
     {
       var activityTypes = await context.ActivityTypes.ToListAsync();
@@ -30,8 +34,14 @@ namespace PlatformAMA.Modules.Volunteers.Controllers
       return Ok(mapper.Map<List<ActivityTypeDTO>>(activityTypes));
     }
 
-    // GET: api/ActivityTypes/5
+    /// <summary>
+    /// Obtener un tipo de actividad por id
+    /// </summary>
+    /// <param name="id">Id del tipo de actividad</param>
+    /// <returns></returns>
     [HttpGet("{id}")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult<string> Get(int id)
     {
       var activityType = context.ActivityTypes.FirstOrDefault(at => at.Id == id);
@@ -44,8 +54,14 @@ namespace PlatformAMA.Modules.Volunteers.Controllers
       return Ok(mapper.Map<ActivityTypeDTO>(activityType));
     }
 
-    // POST: api/ActivityTypes
+    /// <summary>
+    /// Crear un tipo de actividad
+    /// </summary>
+    /// <param name="activityTypeCreationDTO">Datos para crear el tipo de actividad</param>
+    /// <returns></returns>
     [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> Post([FromBody] ActivityTypeCreationDTO activityTypeCreationDTO)
     {
       var activityType = mapper.Map<ActivityType>(activityTypeCreationDTO);
@@ -53,11 +69,20 @@ namespace PlatformAMA.Modules.Volunteers.Controllers
       context.Add(activityType);
       await context.SaveChangesAsync();
 
-      return Ok(mapper.Map<ActivityTypeDTO>(activityType));
+      var activityTypeDTO = mapper.Map<ActivityTypeDTO>(activityType);
+
+      return CreatedAtAction(nameof(Get), new { id = activityTypeDTO.Id }, activityTypeDTO);
     }
 
-    // PUT: api/ActivityTypes/5
+    /// <summary>
+    /// Actualizar un tipo de actividad
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="activityTypeUpdateDTO">Datos para actualizar el tipo de actividad</param>
+    /// <returns></returns>
     [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<ActionResult> Put(int id, [FromBody] ActivityTypeCreationDTO activityTypeUpdateDTO)
     {
       var existingActivityType = await context.ActivityTypes.FirstOrDefaultAsync(at => at.Id == id);
@@ -68,14 +93,19 @@ namespace PlatformAMA.Modules.Volunteers.Controllers
       }
 
       mapper.Map(activityTypeUpdateDTO, existingActivityType);
-
       await context.SaveChangesAsync();
 
-      return Ok(mapper.Map<ActivityTypeDTO>(existingActivityType));
+      return NoContent();
     }
 
-    // DELETE: api/ActivityTypes/5
+    /// <summary>
+    /// Eliminar un tipo de actividad
+    /// </summary>
+    /// <param name="id">Id del tipo de actividad a eliminar</param>
+    /// <returns></returns>
     [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public ActionResult Delete(int id)
     {
       var existingActivityType = context.ActivityTypes.FirstOrDefault(at => at.Id == id);
@@ -88,7 +118,7 @@ namespace PlatformAMA.Modules.Volunteers.Controllers
       context.Remove(existingActivityType);
       context.SaveChanges();
 
-      return Ok();
+      return NoContent();
     }
   }
 }

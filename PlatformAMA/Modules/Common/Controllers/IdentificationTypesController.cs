@@ -18,14 +18,26 @@ namespace PlatformAMA.Modules.Common.Controllers
       this.mapper = mapper;
     }
 
+    /// <summary>
+    /// Obtener todos los tipos de identificación
+    /// </summary>
+    /// <returns></returns>
     [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult> Get()
     {
       var identificationTypes = await context.IdentificationTypes.ToListAsync();
       return Ok(mapper.Map<List<IdentificationTypeDTO>>(identificationTypes));
     }
 
+    /// <summary>
+    /// Obtener un tipo de identificación por id
+    /// </summary>
+    /// <param name="id">Id del tipo de identificación</param>
+    /// <returns></returns>
     [HttpGet("{id}")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult> GetById(int id)
     {
       var identificationType = await context.IdentificationTypes.FirstOrDefaultAsync(x => x.Id == id);
@@ -38,16 +50,31 @@ namespace PlatformAMA.Modules.Common.Controllers
       return Ok(mapper.Map<IdentificationTypeDTO>(identificationType));
     }
 
+    /// <summary>
+    /// Crear un tipo de identificación
+    /// </summary>
+    /// <param name="identificationTypeCreationDTO">Datos para crear el tipo de identificación</param>
+    /// <returns></returns>
     [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<ActionResult> Post(IdentificationTypeCreationDTO identificationTypeCreationDTO)
     {
       var identificationType = mapper.Map<IdentificationType>(identificationTypeCreationDTO);
       context.Add(identificationType);
       await context.SaveChangesAsync();
-      return Ok(mapper.Map<IdentificationTypeDTO>(identificationType));
+      var identificationTypeDTO = mapper.Map<IdentificationTypeDTO>(identificationType);
+      return CreatedAtAction(nameof(GetById), new { id = identificationTypeDTO.Id }, identificationTypeDTO);
     }
 
+    /// <summary>
+    /// Actualizar un tipo de identificación
+    /// </summary>
+    /// <param name="id">Id del tipo de identificación a actualizar</param>
+    /// <param name="identificationTypeCreationDTO">Datos para actualizar el tipo de identificación</param>
+    /// <returns></returns>
     [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> Put(int id, IdentificationTypeCreationDTO identificationTypeCreationDTO)
     {
       var identificationType = await context.IdentificationTypes.FirstOrDefaultAsync(x => x.Id == id);
@@ -62,7 +89,14 @@ namespace PlatformAMA.Modules.Common.Controllers
       return NoContent();
     }
 
+    /// <summary>
+    /// Eliminar un tipo de identificación
+    /// </summary>
+    /// <param name="id">Id del tipo de identificación a eliminar</param>
+    /// <returns></returns>
     [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> Delete(int id)
     {
       var identificationType = await context.IdentificationTypes.FirstOrDefaultAsync(x => x.Id == id);

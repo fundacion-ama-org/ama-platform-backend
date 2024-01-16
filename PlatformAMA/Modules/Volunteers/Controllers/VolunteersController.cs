@@ -21,7 +21,12 @@ namespace PlatformAMA.Modules.Volunteers.Controllers
       this.mapper = mapper;
     }
 
+    /// <summary>
+    /// Obtener todos los voluntarios
+    /// </summary>
+    /// <returns></returns>
     [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<List<VolunteerDTO>>> Get()
     {
       var volunteers = await context.Volunteers
@@ -32,19 +37,36 @@ namespace PlatformAMA.Modules.Volunteers.Controllers
       return volunteersDTO;
     }
 
+    /// <summary>
+    /// Obtener un voluntario por id
+    /// </summary>
+    /// <param name="id">Id del voluntario</param>
+    /// <returns></returns>
     [HttpGet("{id}")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<VolunteerDTO>> Get(int id)
     {
-      var volunteer = await context.Volunteers.FirstOrDefaultAsync(v => v.Id == id);
+      var volunteer = await context.Volunteers
+        .Include(v => v.Person)
+        .Include(v => v.ActivityType)
+        .FirstOrDefaultAsync(v => v.Id == id);
       if (volunteer == null)
       {
         return NotFound();
       }
       var volunteerDTO = mapper.Map<VolunteerDTO>(volunteer);
-      return volunteerDTO;
+      return Ok(volunteerDTO);
     }
 
+    /// <summary>
+    /// Crear un voluntario
+    /// </summary>
+    /// <param name="volunteerCreationDTO">Datos para crear el voluntario</param>
+    /// <returns></returns>
     [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> Post([FromBody] VolunteerCreationDTO volunteerCreationDTO)
     {
       var person = mapper.Map<Person>(volunteerCreationDTO);
@@ -62,10 +84,25 @@ namespace PlatformAMA.Modules.Volunteers.Controllers
       context.Add(volunteer);
       await context.SaveChangesAsync();
 
-      return Ok();
+      var createdVolunteer = await context.Volunteers
+        .Include(v => v.Person)
+        .Include(v => v.ActivityType)
+        .FirstOrDefaultAsync(v => v.Id == volunteer.Id);
+
+      var volunteerDTO = mapper.Map<VolunteerDTO>(createdVolunteer);
+
+      return CreatedAtAction(nameof(Get), new { id = volunteerDTO.Id }, volunteerDTO);
     }
 
+    /// <summary>
+    /// Actualizar un voluntario
+    /// </summary>
+    /// <param name="id">Id del voluntario a actualizar</param>
+    /// <param name="volunteerCreationDTO">Datos para actualizar el voluntario</param>
+    /// <returns></returns>
     [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<ActionResult> Put(int id, [FromBody] VolunteerCreationDTO volunteerCreationDTO)
     {
       var volunteer = await context.Volunteers.FirstOrDefaultAsync(v => v.Id == id);
@@ -89,7 +126,14 @@ namespace PlatformAMA.Modules.Volunteers.Controllers
       return NoContent();
     }
 
+    /// <summary>
+    /// Eliminar un voluntario
+    /// </summary>
+    /// <param name="id">Id del voluntario a eliminar</param>
+    /// <returns></returns>
     [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<ActionResult> Delete(int id)
     {
       var volunteer = await context.Volunteers.FirstOrDefaultAsync(v => v.Id == id);
@@ -98,7 +142,14 @@ namespace PlatformAMA.Modules.Volunteers.Controllers
         return NotFound();
       }
 
-      volunteer.IsActive = false;
+      var person = await context.Persons.FirstOrDefaultAsync(p => p.Id == volunteer.PersonId);
+      if (person == null)
+      {
+        return NotFound();
+      }
+      
+      context.Remove(person);
+      context.Remove(volunteer);
       await context.SaveChangesAsync();
 
       return NoContent();
