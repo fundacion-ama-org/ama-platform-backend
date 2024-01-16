@@ -8,6 +8,9 @@ namespace PlatformAMA.Modules.Common.DTOs
     [Required]
     public int? IdentificationTypeId { get; set; }
     [Required]
+    [CedulaEcuatoriana(ErrorMessage = "La cédula no es válida.")]
+    public string Identification { get; set; }
+    [Required]
     [MaxLength(50)]
     [MinLength(2)]
     public string FirstName { get; set; }

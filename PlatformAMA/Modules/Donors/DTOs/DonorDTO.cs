@@ -8,6 +8,7 @@ namespace PlatformAMA.Modules.Donors.DTOs
   public class DonorDTO
   {
     public int Id { get; set; }
+    public string Identification { get; set; }
     public int PersonId { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }

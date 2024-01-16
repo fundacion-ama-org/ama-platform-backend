@@ -22,6 +22,7 @@ namespace PlatformAMA.Modules.Common
       CreateMap<DonorUpdateDTO, Person>();
       CreateMap<DonorUpdateDTO, Donor>();
       CreateMap<Donor, DonorDTO>()
+        .ForMember(d => d.Identification, options => options.MapFrom(s => s.Person.Identification))
         .ForMember(d => d.FirstName, options => options.MapFrom(s => s.Person.FirstName))
         .ForMember(d => d.LastName, options => options.MapFrom(s => s.Person.LastName))
         .ForMember(d => d.Email, options => options.MapFrom(s => s.Person.Email))
@@ -29,6 +30,7 @@ namespace PlatformAMA.Modules.Common
       CreateMap<VolunteerCreationDTO, Person>();
       CreateMap<VolunteerCreationDTO, Volunteer>();
       CreateMap<Volunteer, VolunteerDTO>()
+        .ForMember(d => d.Identification, options => options.MapFrom(s => s.Person.Identification))
         .ForMember(d => d.FirstName, options => options.MapFrom(s => s.Person.FirstName))
         .ForMember(d => d.LastName, options => options.MapFrom(s => s.Person.LastName))
         .ForMember(d => d.Email, options => options.MapFrom(s => s.Person.Email))
