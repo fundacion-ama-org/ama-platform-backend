@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using PlatformAMA.Modules.Auth.DTOs;
+using PlatformAMA.Modules.Auth.Interfaces;
+using SendGrid.Helpers.Mail;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -19,12 +22,14 @@ namespace PlatformAMA.Modules.Auth.Controllers
     private readonly UserManager<IdentityUser> _userManager;
     private readonly SignInManager<IdentityUser> _signInManager;
     private readonly IConfiguration _configuration;
+    private readonly IEmailService _emailService;
 
-    public AuthController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IConfiguration configuration)
+    public AuthController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IConfiguration configuration, IEmailService emailService)
     {
       _userManager = userManager;
       _signInManager = signInManager;
       _configuration = configuration;
+      _emailService = emailService;
     }
 
     /// <summary>
@@ -76,7 +81,7 @@ namespace PlatformAMA.Modules.Auth.Controllers
         .Where(x => x.Type == ClaimTypes.NameIdentifier)
         .FirstOrDefault()
         .Value;
-        
+
       return Ok(CreateToken(identification));
     }
 
@@ -108,5 +113,43 @@ namespace PlatformAMA.Modules.Auth.Controllers
         Expiration = expiration
       };
     }
+
+    [HttpPost("forgot-password")]
+    public async Task<IActionResult> ForgotPassword([FromBody] RecoverPasswordDTO model)
+    {
+      var user = await _userManager.FindByEmailAsync(model.Email);
+      if (user == null)
+      {
+        // Handle error: Usuario no encontrado
+        return BadRequest("Usuario no encontrado");
+      }
+
+      var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+      await _emailService.ResetPasswordAsync(model.Email, token);
+
+      // Puedes registrar el enlace de restablecimiento o devolver un mensaje de éxito
+      return Ok("Se ha enviado un enlace de restablecimiento de contraseña por correo electrónico");
+    }
+
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPassword([FromBody] RecoverPasswordParams model)
+    {
+      var user = await _userManager.FindByEmailAsync(model.Email);
+      if (user == null)
+      { 
+        return BadRequest("Usuario no encontrado");
+      }
+
+      var result = await _userManager.ResetPasswordAsync(user, model.Token, model.NewPassword);
+      if (result.Succeeded)
+      {
+        
+        return Ok("Contraseña restablecida exitosamente");
+      }
+
+      return BadRequest(result.Errors);
+    }
+
   }
 }
