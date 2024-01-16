@@ -131,6 +131,9 @@ namespace PlatformAMA.Modules.Donors.Controllers
         return NotFound();
       }
 
+      var person = await context.Persons.FindAsync(donor.PersonId);
+      
+      context.Persons.Remove(person);
       context.Donors.Remove(donor);
       await context.SaveChangesAsync();
 
