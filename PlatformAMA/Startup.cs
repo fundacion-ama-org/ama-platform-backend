@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using PlatformAMA.Modules.Auth.Interfaces;
+using PlatformAMA.Modules.Auth.Services;
+using SendGrid;
 
 namespace PlatformAMA
 {
@@ -38,7 +41,11 @@ namespace PlatformAMA
           ClockSkew = TimeSpan.Zero
         });
 
-      services.AddIdentity<IdentityUser, IdentityRole>()
+      services.AddIdentity<IdentityUser, IdentityRole>(options =>
+      {
+        options.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultEmailProvider;
+        options.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultEmailProvider;
+      })
         .AddEntityFrameworkStores<ApplicationDbContext>()
         .AddDefaultTokenProviders();
 
@@ -91,6 +98,16 @@ namespace PlatformAMA
       services.AddAutoMapper(typeof(Startup));
 
       services.AddApplicationInsightsTelemetry();
+
+      // Configuración y registro de SendGridEmailService
+      var sendGridApiKey = Configuration["SendGrid:ApiKey"];
+      var senderEmail = Configuration["SendGrid:SenderEmail"];
+
+      var sendGridClient = new SendGridClient(sendGridApiKey);
+      services.AddSingleton<ISendGridClient>(sendGridClient);
+
+      services.AddScoped<IEmailService>(provider => new SendGridEmailService(provider.GetRequiredService<ISendGridClient>(), senderEmail, Configuration));
+
 
       services.AddCors(options =>
       {
