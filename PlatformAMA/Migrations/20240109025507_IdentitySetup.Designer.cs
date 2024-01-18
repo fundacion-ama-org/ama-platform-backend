@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlatformAMA;
 
 namespace PlatformAMA.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240109025507_IdentitySetup")]
+    partial class IdentitySetup
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -391,83 +393,6 @@ namespace PlatformAMA.Migrations
 
                     b.ToTable("Volunteers");
                 });
-            //BeneficiaryType
-            modelBuilder.Entity("PlatformAMA.Modules.Beneficiaries.Models.BeneficiaryType", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int")
-                    .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                b.Property<DateTime>("CreatedAt")
-                    .HasColumnType("datetime2");
-
-                b.Property<DateTime>("CreatedBy")
-                    .HasColumnType("datetime2");
-
-                b.Property<string>("Name")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(100)")
-                    .HasMaxLength(100);
-
-                b.Property<DateTime>("UpdatedAt")
-                    .HasColumnType("datetime2");
-
-                b.Property<DateTime>("UpdatedBy")
-                    .HasColumnType("datetime2");
-
-                b.HasKey("Id");
-
-                b.ToTable("BeneficiaryTypes");
-            });
-            //Beneficiaries
-            modelBuilder.Entity("PlatformAMA.Modules.Beneficiaries.Models.Beneficiarie", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int")
-                    .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                b.Property<int>("BeneficiaryTypeId")
-                    .HasColumnType("int");
-
-                b.Property<string>("Description")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(100)")
-                    .HasMaxLength(100);
-
-                b.Property<DateTime>("CreatedAt")
-                    .HasColumnType("datetime2");
-
-                b.Property<DateTime>("CreatedBy")
-                    .HasColumnType("datetime2");
-
-                b.Property<DateTime>("EndDate")
-                    .HasColumnType("datetime2");
-
-                b.Property<bool>("IsActive")
-                    .HasColumnType("bit");
-
-                b.Property<int>("PersonId")
-                    .HasColumnType("int");
-
-                b.Property<DateTime>("StartDate")
-                    .HasColumnType("datetime2");
-
-                b.Property<DateTime>("UpdatedAt")
-                    .HasColumnType("datetime2");
-
-                b.Property<DateTime>("UpdatedBy")
-                    .HasColumnType("datetime2");
-
-                b.HasKey("Id");
-
-                b.HasIndex("BeneficiaryTypeId");
-
-                b.HasIndex("PersonId");
-
-                b.ToTable("Beneficiaries");
-            });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
@@ -538,11 +463,11 @@ namespace PlatformAMA.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("PlatformAMA.Modules.Donations.Models.Donations", b =>
+            modelBuilder.Entity("PlatformAMA.Modules.Volunteers.Models.Volunteer", b =>
                 {
-                    b.HasOne("PlatformAMA.Modules.Donations.Models.DonationType", "DonationType")
-                        .WithMany("Donations")
-                        .HasForeignKey("DonationTypeId")
+                    b.HasOne("PlatformAMA.Modules.Volunteers.Models.ActivityType", "ActivityType")
+                        .WithMany("Volunteers")
+                        .HasForeignKey("ActivityTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -552,75 +477,6 @@ namespace PlatformAMA.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
-            //Beneficiarie
-            modelBuilder.Entity("PlatformAMA.Modules.Beneficiaries.Models.Beneficiarie", b =>
-            {
-                b.HasOne("PlatformAMA.Modules.Beneficiaries.Models.BeneficiaryType", "BeneficiaryType")
-                    .WithMany("Beneficiaries")
-                    .HasForeignKey("BeneficiaryTypeId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
-
-                b.HasOne("PlatformAMA.Modules.Common.Models.Person", "Person")
-                    .WithMany()
-                    .HasForeignKey("PersonId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
-            });
-            modelBuilder.Entity("PlatformAMA.Modules.Donations.Models.DonationType", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int")
-                    .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                b.Property<DateTime>("CreatedAt")
-                    .HasColumnType("datetime2");
-
-                b.Property<string>("Name")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(100)")
-                    .HasMaxLength(100);
-
-                b.Property<DateTime>("UpdatedAt")
-                    .HasColumnType("datetime2");
-
-                b.HasKey("Id");
-
-                b.ToTable("DonationType");
-            });
-            modelBuilder.Entity("PlatformAMA.Modules.Donations.Models.Donations", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int")
-                    .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                b.Property<int>("DonationTypeId")
-                    .HasColumnType("int");
-
-                b.Property<DateTime>("CreatedAt")
-                    .HasColumnType("datetime2");
-
-
-                b.Property<bool>("IsActive")
-                    .HasColumnType("bit");
-
-                b.Property<int>("PersonId")
-                    .HasColumnType("int");
-
-
-                b.Property<DateTime>("UpdatedAt")
-                    .HasColumnType("datetime2");
-
-                b.HasKey("Id");
-
-                b.HasIndex("DonationTypeId");
-
-                b.HasIndex("PersonId");
-
-                b.ToTable("Donations");
-            });
 #pragma warning restore 612, 618
         }
     }

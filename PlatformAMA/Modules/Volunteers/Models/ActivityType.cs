@@ -13,7 +13,6 @@ namespace PlatformAMA.Modules.Volunteers.Models
     public string Name { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
-    public DateTime CreatedBy { get; set; }
-    public DateTime UpdatedBy { get; set; }
+    public List<Volunteer> Volunteers { get; set; }
   }
 }

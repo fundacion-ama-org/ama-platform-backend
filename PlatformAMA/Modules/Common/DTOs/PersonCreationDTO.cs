@@ -6,7 +6,7 @@ namespace PlatformAMA.Modules.Common.DTOs
   public class PersonCreationDTO
   {
     [Required]
-    public int IdentificationTypeId { get; set; }
+    public int? IdentificationTypeId { get; set; }
     [Required]
     [MaxLength(50)]
     [MinLength(2)]
@@ -21,7 +21,5 @@ namespace PlatformAMA.Modules.Common.DTOs
     [Required]
     [Phone]
     public string PhoneNumber { get; set; }
-    [Required]
-    public int ActivityId { get; set; }
   }
 }

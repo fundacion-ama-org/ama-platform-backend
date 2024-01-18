@@ -15,17 +15,32 @@ namespace PlatformAMA.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(maxLength: 100, nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
+                    UpdatedAt = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ActivityTypes", x => x.Id);
+                });
+                //BeneficiaryType
+                migrationBuilder.CreateTable(
+                name: "BeneficiaryTypes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(maxLength: 100, nullable: false),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
                     UpdatedAt = table.Column<DateTime>(nullable: false),
                     CreatedBy = table.Column<DateTime>(nullable: false),
                     UpdatedBy = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ActivityTypes", x => x.Id);
+                    table.PrimaryKey("PK_BeneficiaryTypes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "IdentificationType",
+                name: "IdentificationTypes",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -34,13 +49,11 @@ namespace PlatformAMA.Migrations
                     Description = table.Column<string>(nullable: true),
                     IsActive = table.Column<bool>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
-                    UpdatedAt = table.Column<DateTime>(nullable: false),
-                    CreatedBy = table.Column<DateTime>(nullable: false),
-                    UpdatedBy = table.Column<DateTime>(nullable: false)
+                    UpdatedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_IdentificationType", x => x.Id);
+                    table.PrimaryKey("PK_IdentificationTypes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -59,17 +72,15 @@ namespace PlatformAMA.Migrations
                     PhoneNumber = table.Column<string>(nullable: false),
                     IsActive = table.Column<bool>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
-                    UpdatedAt = table.Column<DateTime>(nullable: false),
-                    CreatedBy = table.Column<DateTime>(nullable: false),
-                    UpdatedBy = table.Column<DateTime>(nullable: false)
+                    UpdatedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Persons", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Persons_IdentificationType_IdentificationTypeId",
+                        name: "FK_Persons_IdentificationTypes_IdentificationTypeId",
                         column: x => x.IdentificationTypeId,
-                        principalTable: "IdentificationType",
+                        principalTable: "IdentificationTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -80,7 +91,9 @@ namespace PlatformAMA.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    PersonId = table.Column<int>(nullable: false)
+                    PersonId = table.Column<int>(nullable: false),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    UpdatedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -93,7 +106,7 @@ namespace PlatformAMA.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
+                migrationBuilder.CreateTable(
                 name: "Volunteers",
                 columns: table => new
                 {
@@ -108,9 +121,7 @@ namespace PlatformAMA.Migrations
                     StartDate = table.Column<DateTime>(nullable: false),
                     EndDate = table.Column<DateTime>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
-                    UpdatedAt = table.Column<DateTime>(nullable: false),
-                    CreatedBy = table.Column<DateTime>(nullable: false),
-                    UpdatedBy = table.Column<DateTime>(nullable: false)
+                    UpdatedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -127,6 +138,40 @@ namespace PlatformAMA.Migrations
                         principalTable: "Persons",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+            //Beneficiarie    
+                migrationBuilder.CreateTable(
+                name: "Beneficiaries",
+                columns: table => new
+                {
+                Id = table.Column<int>(nullable: false)
+                    .Annotation("SqlServer:Identity", "1, 1"),
+                PersonId = table.Column<int>(nullable: false),
+                IsActive = table.Column<bool>(nullable: false),
+                Description = table.Column<string>(maxLength: 100, nullable: false),
+                BeneficiaryTypeId = table.Column<int>(nullable: false),
+                StartDate = table.Column<DateTime>(nullable: false),
+                EndDate = table.Column<DateTime>(nullable: false),
+                CreatedAt = table.Column<DateTime>(nullable: false),
+                UpdatedAt = table.Column<DateTime>(nullable: false),
+                CreatedBy = table.Column<DateTime>(nullable: false),
+                UpdatedBy = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                table.PrimaryKey("PK_Beneficiaries", x => x.Id);
+                table.ForeignKey(
+                    name: "FK_Beneficiaries_BeneficiaryTypes_BeneficiaryTypeId",
+                    column: x => x.BeneficiaryTypeId,
+                    principalTable: "BeneficiaryTypes",
+                    principalColumn: "Id",
+                    onDelete: ReferentialAction.Cascade);
+                table.ForeignKey(
+                    name: "FK_Beneficiaries_Persons_PersonId",
+                    column: x => x.PersonId,
+                    principalTable: "Persons",
+                    principalColumn: "Id",
+                    onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -165,7 +210,7 @@ namespace PlatformAMA.Migrations
                 name: "Persons");
 
             migrationBuilder.DropTable(
-                name: "IdentificationType");
+                name: "IdentificationTypes");
         }
     }
 }

@@ -10,7 +10,7 @@ using PlatformAMA;
 namespace PlatformAMA.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240103033313_Initial")]
+    [Migration("20240106212635_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -31,9 +31,6 @@ namespace PlatformAMA.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("CreatedBy")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -48,12 +45,9 @@ namespace PlatformAMA.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("UpdatedBy")
-                        .HasColumnType("datetime2");
-
                     b.HasKey("Id");
 
-                    b.ToTable("IdentificationType");
+                    b.ToTable("IdentificationTypes");
                 });
 
             modelBuilder.Entity("PlatformAMA.Modules.Common.Models.Person", b =>
@@ -64,9 +58,6 @@ namespace PlatformAMA.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("CreatedBy")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
@@ -105,9 +96,6 @@ namespace PlatformAMA.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("UpdatedBy")
-                        .HasColumnType("datetime2");
-
                     b.HasKey("Id");
 
                     b.HasIndex("IdentificationTypeId");
@@ -122,8 +110,14 @@ namespace PlatformAMA.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("PersonId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -142,18 +136,12 @@ namespace PlatformAMA.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("CreatedBy")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(100)")
                         .HasMaxLength(100);
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("UpdatedBy")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -182,9 +170,6 @@ namespace PlatformAMA.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("CreatedBy")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
@@ -202,9 +187,6 @@ namespace PlatformAMA.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("UpdatedBy")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -237,7 +219,7 @@ namespace PlatformAMA.Migrations
             modelBuilder.Entity("PlatformAMA.Modules.Volunteers.Models.Volunteer", b =>
                 {
                     b.HasOne("PlatformAMA.Modules.Volunteers.Models.ActivityType", "ActivityType")
-                        .WithMany()
+                        .WithMany("Volunteers")
                         .HasForeignKey("ActivityTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

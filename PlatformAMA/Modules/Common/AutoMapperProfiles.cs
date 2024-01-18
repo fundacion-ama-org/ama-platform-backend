@@ -1,6 +1,7 @@
 
 
 using AutoMapper;
+using PlatformAMA.Modules.Common.DTOs;
 using PlatformAMA.Modules.Common.Models;
 using PlatformAMA.Modules.Donors.DTOs;
 using PlatformAMA.Modules.Donors.Models;
@@ -14,6 +15,9 @@ namespace PlatformAMA.Modules.Common
     public AutoMapperProfiles()
     {
       CreateMap<DonorCreationDTO, Person>();
+      CreateMap<IdentificationTypeCreationDTO, IdentificationType>();
+      CreateMap<IdentificationType, IdentificationTypeDTO>();
+
       CreateMap<DonorCreationDTO, Donor>();
       CreateMap<DonorUpdateDTO, Person>();
       CreateMap<DonorUpdateDTO, Donor>();
@@ -24,6 +28,11 @@ namespace PlatformAMA.Modules.Common
         .ForMember(d => d.PhoneNumber, options => options.MapFrom(s => s.Person.PhoneNumber));
       CreateMap<VolunteerCreationDTO, Person>();
       CreateMap<VolunteerCreationDTO, Volunteer>();
+      CreateMap<Volunteer, VolunteerDTO>()
+        .ForMember(d => d.FirstName, options => options.MapFrom(s => s.Person.FirstName))
+        .ForMember(d => d.LastName, options => options.MapFrom(s => s.Person.LastName))
+        .ForMember(d => d.Email, options => options.MapFrom(s => s.Person.Email))
+        .ForMember(d => d.PhoneNumber, options => options.MapFrom(s => s.Person.PhoneNumber));
 
       CreateMap<ActivityType, ActivityTypeDTO>();
       CreateMap<ActivityTypeCreationDTO, ActivityType>();
