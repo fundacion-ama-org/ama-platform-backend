@@ -1,6 +1,7 @@
 
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using PlatformAMA.Modules.Brigadas.Models;
 using PlatformAMA.Modules.Beneficiaries.Models;
 using PlatformAMA.Modules.Common.Models;
 using PlatformAMA.Modules.Donors.Models;
@@ -15,6 +16,10 @@ namespace PlatformAMA
     }
 
     public DbSet<Person> Persons { get; set; }
+    
+    //brigadas
+    public DbSet<Brigada> Brigadas { get; set; }
+    
     public DbSet<IdentificationType> IdentificationTypes { get; set; }
     public DbSet<Donor> Donors { get; set; }
     public DbSet<ActivityType> ActivityTypes { get; set; }
